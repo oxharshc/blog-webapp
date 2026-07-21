@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <%- include('./partials/head.ejs')%>
+<!-- SITE TITLE -->
+<title><%= blog.title %></title>
+</head>
+
+<body>
+
+<!-- START HEADER -->
+  <%- include('./partials/nav.ejs')%>
+<!-- END HEADER --> 
+
+<!-- START SECTION BLOG -->
+<section>
+	<div class="container">
+        <div class="row">
+            <div class="col-12">
+            	<div class="single_post">
+                    <div class="blog_img">
+                        <a href="#">
+                            <img src="<%= blog.coverImageURL %>" alt="blog_img1">
+                        </a>
+                    </div>
+                    <div class="single_post_content">
+                      <div class="blog_text">
+                            <h2 class="blog_title"><%= blog.title %></h2>
+                            <ul class="list_none blog_meta">
+                                <li><a href="#"><img src="<%= blog.createdBy.profileImageURL %>" alt="image"><span> <%= blog.createdBy.fullName %><li><a href="#"><i class="far fa-calendar"></i><%= blog.createdAt.toDateString() %></a></li>
+                                <li><a href="#"><i class="far fa-comments"></i><%= comments.length %></a></li>
+                            </ul>
+                              <div class="mt-3"><%- htmlBody %></div>
+                          <div class="border-bottom blog_post_footer">
+                            </div>
+                        </div>
+                    </div>
+
+
+<div class="comment-area">
+    <div class="posts-title">
+        <h5>(<%= comments.length %>) Comments</h5>
+    </div>
+
+    <!-- Comments List -->
+    <ul class="list_none comment_list">
+        <% comments.forEach(comment => { %>
+            <li class="comment_info">
+                <div class="d-flex">
+                    <div class="user_img">
+                        <img src="<%= comment.createdBy.profileImageURL %>" alt="<%= comment.createdBy.fullName %>">
+                    </div>
+                    <div class="comment_content">
+                        <div class="d-flex">
+                            <div class="meta_data">
+                                <h6><a href="#"><%= comment.createdBy.fullName %></a></h6>
+                                <div class="comment-time"><%= new Date(comment.createdAt).toDateString() %></div>
+                            </div>
+                        </div>
+                        <p><%= comment.content %></p>
+                    </div>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+
+    <!-- Comment Form -->
+    <div class="posts-title">
+        <h5>Write a comment</h5>
+    </div>
+
+    <% if (locals.user) { %>
+        <form class="field_form icon_form" action="/blog/comment/<%= blog._id %>" method="POST">
+            <div class="row">
+                <div class="form-group col-12">
+                    <div class="form-input">
+                        <span>
+                            <i class="ti-comments"></i>
+                        </span>
+                        <textarea required="required" placeholder="Your comment *" class="form-control" name="content" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="form-group col-12">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
+        </form>
+<% } else { %>
+    <div>
+        <i class="blog_link"></i>
+        <a href="/user/signin" class="btn btn-default btn-radius">Login</a> or 
+        <a href="/user/signup" class="btn btn-default btn-radius">Sign up</a> to write a comment.
+    </div>
+<% } %>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END SECTION BLOG -->
+
+<!-- START FOOTER -->
+
+<%- include('./partials/footer.ejs')%>
+
+<!-- END FOOTER -->
+
+<a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a> 
+
+
+<%- include('./partials/script.ejs')%>
+
+</body>
+</html>

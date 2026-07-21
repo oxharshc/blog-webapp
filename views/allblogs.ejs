@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <%- include('./partials/head.ejs')%>
+<!-- SITE TITLE -->
+<title>Blogs</title>
+</head>
+
+<body>
+
+<!-- START HEADER -->
+  <%- include('./partials/nav.ejs')%>
+<!-- END HEADER --> 
+
+  <!-- START SECTION BLOG -->
+  <section>
+    <div class="container">
+      <div class="row">
+        <% blogs.forEach(blog => { %>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="blog_post box_shadow4">
+              <div class="blog_img">
+                <a href="/blog/<%= blog._id %>">
+                  <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" style="height: 200px; object-fit: cover; width: 100%;">
+                </a>
+              </div>
+              <div class="blog_content">
+                <h5 class="blog_title">
+                  <a href="/blog/<%= blog._id %>"><%= blog.title %></a>
+                </h5>
+                <ul class="list_none blog_meta">
+                  <li>
+                    <a href="#"><i class="far fa-calendar"></i><%= new Date(blog.createdAt).toDateString() %></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="far fa-user"></i><%= blog.createdBy.fullName %></a>
+                  </li>
+                </ul>
+                <a href="/blog/<%= blog._id %>" class="blog_link btn btn-default btn-radius">Read More</a>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+  <!-- END SECTION BLOG -->
+
+<!-- START FOOTER -->
+
+<%- include('./partials/footer.ejs')%>
+
+<!-- END FOOTER -->
+
+<a href="#" class="scrollup" style="display: none;"><i class="ion-ios-arrow-up"></i></a> 
+
+
+<%- include('./partials/script.ejs')%>
+
+</body>
+</html>

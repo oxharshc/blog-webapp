@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include('./partials/head.ejs')%>
+    <title>Add New Blog</title>
+    <!-- EasyMDE CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <style>
+      .editor-toolbar { border-top: 1px solid #ced4da; border-left: 1px solid #ced4da; border-right: 1px solid #ced4da; }
+      .CodeMirror { border: 1px solid #ced4da; border-bottom-left-radius: 0.375rem; border-bottom-right-radius: 0.375rem; min-height: 300px; }
+    </style>
+</head>
+
+<body>
+  <%- include('./partials/nav.ejs')%>
+
+    <div class="container mt-3">
+      <form action="/blog" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="coverImage" class="form-label">Cover Image</label>
+          <input type="file" class="form-control" id="coverImage" name="coverImage" aria-describedby="coverImage">
+        </div>
+
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" class="form-control" id="title" name="title" aria-describedby="title" placeholder="New post title here...">
+        </div>
+
+        <div class="mb-3">
+          <label for="body" class="form-label">Body (Markdown supported)</label>
+          <textarea name="body" id="body"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <button type="submit" class="btn btn-primary">Publish</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- EasyMDE JS -->
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script>
+      const easyMDE = new EasyMDE({
+        element: document.getElementById('body'),
+        placeholder: "Write your post content here...",
+        spellChecker: false,
+        autosave: {
+          enabled: true,
+          uniqueId: "add-blog",
+          delay: 1000,
+        },
+        toolbar: ["bold", "italic", "heading", "|", "quote", "code", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"]
+      });
+    </script>
+
+    <%- include('./partials/script.ejs')%>
+</body>
+

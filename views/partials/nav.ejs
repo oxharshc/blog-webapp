@@ -1,35 +1,40 @@
 <header class="header_wrap dark_skin main_menu_uppercase main_menu_weight_600 menu_style1">
 
     <div class="container">
-        <nav class="navbar navbar-expand-lg"> 
+        <nav class="navbar navbar-expand-lg">
             <a class="navbar-brand" href="/">
                 <img class="logo_light" src="/assets/images/logo.png" alt="logo" />
                 <img class="logo_dark" src="/assets/images/logo.png" alt="logo" />
                 <img class="logo_default" src="/assets/images/logo.png" alt="logo" />
             </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="ion-android-menu"></span> </button>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span
+                    class="ion-android-menu"></span> </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                     <li>
-                        <a class="nav-link active" href="/" data-toggle="dropdown">Home</a>
+                        <a class="nav-link" href="/">Home</a>
                     </li>
                     <li>
                         <a class="nav-link" href="/blog/allblogs">Blogs</a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="/blog/addd-new">Create Blogs</a>
-                    </li>
-                    <li>
-                        <a class="nav-link" href="#">Create Account</a>
-                    </li>
-                    <li>
-                        <a class="nav-link" href="#">Sigin</a>
-                    </li>
-
+                    <% if (locals.user) { %>
+                        <li>
+                            <a class="nav-link" href="/blog/add-new">Create Blog</a>
+                        </li>
+                        <% } else { %>
+                            <li>
+                                <a class="nav-link" href="/user/signup">Create Account</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="/user/signin">Sign In</a>
+                            </li>
+                            <% } %>
                 </ul>
             </div>
             <ul class="navbar-nav attr-nav align-items-center">
-                <li><a href="javascript:void(0);" class="nav-link search_trigger"><i class="ion-ios-search-strong"></i>Search</a>
+                <li><a href="javascript:void(0);" class="nav-link search_trigger"><i
+                            class="ion-ios-search-strong"></i>Search</a>
                     <div class="search-overlay">
                         <div class="search_wrap">
                             <form>
@@ -41,24 +46,26 @@
                         </div>
                     </div>
                 </li>
-<li class="dropdown cart_wrap">
-    <a class="nav-link" href="#" data-toggle="dropdown">
-        <i class="ion-android-person"></i>     </a>
- <div class="cart_box dropdown-menu dropdown-menu-right">
-    <ul class="cart_list">
-        <li><a href="/profile"><i class="ion-person btn btn-default btn-radius"></i>Profile</a></li>
-        <li><a href="/my-posts"><i class="ion-document-text btn btn-default btn-radius"></i> My Posts</a></li>
-        <li><a href="/auth/reset-password"><i class="ion-locked btn btn-default btn-radius"></i> Reset Password</a></li>
-    </ul>
-    <div class="cart_footer">
-        <p class="cart_buttons">
-            <form action="/auth/logout" method="POST">
-                <button type="submit" class="btn btn-default btn-radius"><i class="ion-log-out"></i>Logout</button>
-            </form>
-        </p>
-    </div>
-</div>
-</li>
+                <% if (locals.user) { %>
+                    <li class="dropdown cart_wrap">
+                        <a class="nav-link" href="#" data-toggle="dropdown">
+                            <i class="ion-android-person"></i>
+                            <%= locals.user.fullName %>
+                        </a>
+                        <div class="cart_box dropdown-menu dropdown-menu-right">
+                            <ul class="cart_list">
+                                <li><a href="/blog/add-new"><i class="ion-document-text btn btn-default btn-radius"></i>
+                                        Create Blog</a></li>
+                            </ul>
+                            <div class="cart_footer">
+                                <p class="cart_buttons">
+                                    <a href="/user/logout" class="btn btn-default btn-radius"><i
+                                            class="ion-log-out"></i>Logout</a>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    <% } %>
             </ul>
         </nav>
     </div>

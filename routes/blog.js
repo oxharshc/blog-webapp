@@ -4,12 +4,7 @@ const path = require("path");
 const { marked } = require("marked");
 const createDOMPurify = require("dompurify");
 const { JSDOM } = require("jsdom");
-const {
-  checkForAuthenticationCookie,
-  requireAuth,
-} = require("../middleware/authentication");
-
-console.log("requireAuth:", typeof requireAuth);
+const { requireAuth } = require("../middleware/authentication.js");
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -30,57 +25,90 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get("/add-new", (req, res) => {
+router.get("/add-new", requireAuth, (req, res) => {
   return res.render("addBlog", {
     user: req.user,
   });
 });
 
 router.get("/allblogs", async (req, res) => {
-  const blogs = await Blog.find({})
-    .populate("createdBy")
-    .sort({ createdAt: -1 });
-  return res.render("allblogs", {
-    user: req.user,
-    blogs, // <-- this is what was missing
-  });
+  try {
+    const blogs = await Blog.find({})
+      .populate("createdBy")
+      .sort({ createdAt: -1 });
+    return res.render("allblogs", {
+      user: req.user,
+      blogs,
+    });
+  } catch (error) {
+    console.error("Error fetching all blogs:", error);
+    return res.redirect("/");
+  }
 });
 
 router.get("/:id", async (req, res) => {
-  const blog = await Blog.findById(req.params.id).populate("createdBy");
-  const comments = await Comment.find({ blogId: req.params.id }).populate(
-    "createdBy",
-  );
+  try {
+    const blog = await Blog.findById(req.params.id).populate("createdBy");
+    if (!blog) {
+      return res.status(404).render("index", {
+        user: req.user,
+        blogs: [],
+        error: "Blog post not found",
+      });
+    }
 
-  // Convert markdown to safe HTML
-  const htmlBody = DOMPurify.sanitize(marked.parse(blog.body));
+    const comments = await Comment.find({ blogId: req.params.id }).populate(
+      "createdBy",
+    );
 
-  return res.render("blog-single", {
-    user: req.user,
-    blog,
-    htmlBody,
-    comments,
-  });
+    // Convert markdown to safe HTML
+    const htmlBody = DOMPurify.sanitize(marked.parse(blog.body || ""));
+
+    return res.render("blog", {
+      user: req.user,
+      blog,
+      htmlBody,
+      comments,
+    });
+  } catch (error) {
+    console.error("Error loading blog:", error);
+    return res.redirect("/");
+  }
 });
 
 router.post("/comment/:blogId", requireAuth, async (req, res) => {
-  await Comment.create({
-    content: req.body.content,
-    blogId: req.params.blogId,
-    createdBy: req.user._id,
-  });
-  return res.redirect(`/blog/${req.params.blogId}`);
+  try {
+    await Comment.create({
+      content: req.body.content,
+      blogId: req.params.blogId,
+      createdBy: req.user._id,
+    });
+    return res.redirect(`/blog/${req.params.blogId}`);
+  } catch (error) {
+    console.error("Error posting comment:", error);
+    return res.redirect(`/blog/${req.params.blogId}`);
+  }
 });
 
-router.post("/", upload.single("coverImage"), async (req, res) => {
-  const { title, body } = req.body;
-  const blog = await Blog.create({
-    body,
-    title,
-    createdBy: req.user._id,
-    coverImageURL: `/uploads/${req.file.filename}`,
-  });
-  return res.redirect(`/blog/${blog._id}`);
+router.post("/", requireAuth, upload.single("coverImage"), async (req, res) => {
+  try {
+    const { title, body } = req.body;
+    const coverImageURL = req.file ? `/uploads/${req.file.filename}` : "/images/default.jpg";
+
+    const blog = await Blog.create({
+      body,
+      title,
+      createdBy: req.user._id,
+      coverImageURL,
+    });
+    return res.redirect(`/blog/${blog._id}`);
+  } catch (error) {
+    console.error("Error creating blog post:", error);
+    return res.render("addBlog", {
+      user: req.user,
+      error: "Failed to create blog post. Please try again.",
+    });
+  }
 });
 
 module.exports = router;

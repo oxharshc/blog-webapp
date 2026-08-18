@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
+// this for importing DB from models
 const Blog = require("./models/blog.js");
 
 // Route setup
@@ -20,8 +21,8 @@ const PORT = process.env.PORT || 8000;
 
 // connect mongoose DB
 mongoose
-  //.connect("mongodb://localhost:27017/bloggerify")
-  .connect(process.env.MONGO_URL)
+  .connect("mongodb://localhost:27017/bloggerify")
+  // .connect(process.env.MONGO_URL)
   .then((e) => console.log("MongoDB is Connected"));
 
 // set views
@@ -38,7 +39,7 @@ app.use(express.static(path.resolve("./public/")));
 app.get("/", async (req, res) => {
   const allBlogs = await Blog.find({});
 
-  res.render("index", {
+  res.render("home", {
     user: req.user,
     blogs: allBlogs,
   });

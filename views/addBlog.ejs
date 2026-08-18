@@ -16,6 +16,11 @@
   <%- include('./partials/nav.ejs')%>
 
     <div class="container mt-3">
+      <% if (locals.error) { %>
+        <div class="alert alert-danger" role="alert">
+          <%= locals.error %>
+        </div>
+      <% } %>
       <form action="/blog" method="post" enctype="multipart/form-data">
         <div class="mb-3">
           <label for="coverImage" class="form-label">Cover Image</label>
@@ -55,5 +60,9 @@
     </script>
 
     <%- include('./partials/script.ejs')%>
+
+    <%- include('./partials/footer.ejs')%>
+
 </body>
 
+</html>

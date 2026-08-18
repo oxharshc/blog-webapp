@@ -35,22 +35,32 @@ router.get("/logout", (req, res) => {
 router.post("/signup", async (req, res) => {
   const { fullName, email, password } = req.body;
 
-  // Check if email is already taken
-  const existingUser = await User.findOne({ email });
+  try {
+    // Check if email is already taken
+    const existingUser = await User.findOne({ email });
 
-  if (existingUser) {
+    if (existingUser) {
+      return res.render("signup", {
+        error: "This email is already registered.",
+        errorLink: { url: "/user/signin", text: "Sign in here" },
+      });
+    }
+
+    const user = await User.create({
+      fullName,
+      email,
+      password,
+    });
+
+    const token = await User.matchPasswordAndGenerateToken(email, password);
+    return res.cookie("token", token).redirect("/");
+  } catch (error) {
+    console.error("Signup error:", error);
     return res.render("signup", {
-      error: "This email is already registered.",
+      error: "An error occurred during signup. Please try again.",
       errorLink: { url: "/user/signin", text: "Sign in here" },
     });
   }
-
-  await User.create({
-    fullName,
-    email,
-    password,
-  });
-  return res.redirect("/");
 });
 
 module.exports = router;
